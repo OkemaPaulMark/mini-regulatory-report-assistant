@@ -4,3 +4,6 @@ sqlalchemy
 pydantic
 transformers
 torch
+requests
+python-multipart
+pandas
