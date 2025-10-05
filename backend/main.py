@@ -8,7 +8,7 @@ import torch
 
 app = FastAPI()
 
-# --- CORS ---
+#CORS to limit frontend access
 origins = [
     "http://localhost:5173",
     "http://localhost:3000",
@@ -21,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Schemas ---
+#Pydantic models for request and response validation
 class ReportInput(BaseModel):
     report: str
 
@@ -33,7 +33,7 @@ class TranslationReport(BaseModel):
     report: dict  # {'drug': ..., 'severity': ..., 'adverse_events': [...], 'outcome': ...}
     language: str
 
-# --- Load Models ---
+#Loading the models
 print("Loading Hugging Face models...")
 
 try:
@@ -47,6 +47,7 @@ except Exception as e:
     print(f"Error loading NER model: {e}")
     medical_ner = None
 
+# Translation models
 try:
     translator_fr = pipeline("translation_en_to_fr", model="Helsinki-NLP/opus-mt-en-fr")
     translator_sw = pipeline("translation_en_to_sw", model="Helsinki-NLP/opus-mt-en-sw")
@@ -56,7 +57,7 @@ except Exception as e:
     translator_fr = None
     translator_sw = None
 
-# --- DB Dependency ---
+#database dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -64,12 +65,12 @@ def get_db():
     finally:
         db.close()
 
-# --- Root ---
+#root endpoint
 @app.get("/")
 def home():
     return {"message": "Mini Regulatory Report Assistant API is running"}
 
-# --- Core Extraction Logic ---
+#extraction logic
 import re
 
 def extract_medical_info(text: str):
@@ -80,7 +81,7 @@ def extract_medical_info(text: str):
     drug_candidates = []
     adverse_events = []
 
-    # --- NER Extraction ---
+   #NER-based extraction
     for entity in entities:
         group = entity.get("entity_group", "")
         word = entity.get("word", "").strip()
@@ -89,7 +90,7 @@ def extract_medical_info(text: str):
         elif group in ["DISEASE", "SYMPTOM"]:
             adverse_events.append(word)
 
-    # --- Fallback / Keyword Matching ---
+   #Regex-based extraction (fallback)
     if not drug_candidates:
         drug_pattern = r"\b(Ibuprofen|Paracetamol|Aspirin|Metformin|Amoxicillin)\b"
         drug_candidates = re.findall(drug_pattern, text, re.IGNORECASE)
@@ -101,7 +102,7 @@ def extract_medical_info(text: str):
     adverse_events.extend(found_events)
     adverse_events = list(set([e.lower() for e in adverse_events]))  # deduplicate and normalize
 
-    # --- Severity ---
+    #Severity extraction
     text_lower = text.lower()
     severity = None
     if any(w in text_lower for w in ["severe", "critical", "serious"]):
@@ -111,7 +112,7 @@ def extract_medical_info(text: str):
     elif any(w in text_lower for w in ["mild", "slight"]):
         severity = "mild"
 
-    # --- Outcome ---
+    #Outcome extraction
     outcome = None
     if any(w in text_lower for w in ["recovered", "improved", "resolved"]):
         outcome = "recovered"
@@ -127,12 +128,12 @@ def extract_medical_info(text: str):
         "outcome": outcome,
     }
 
-# --- Fallback ---
+#Fallback extraction if NER model fails
 def fallback_extraction(text: str):
     return {"drug": None, "adverse_events": None, "severity": None, "outcome": None}
 
 
-# --- Endpoint ---
+#process report endpoint
 @app.post("/process-report")
 def process_report(data: ReportInput, db: Session = Depends(get_db)):
     extracted = extract_medical_info(data.report)
@@ -155,7 +156,7 @@ def process_report(data: ReportInput, db: Session = Depends(get_db)):
         "outcome": extracted["outcome"]
     }
 
-
+#translation endpoint
 @app.post("/translate")
 def translate_report(data: TranslationReport):
     report = data.report
@@ -183,6 +184,8 @@ def translate_report(data: TranslationReport):
 
     return {"translated_report": translated_report}
 
+
+#get reports endpoint
 @app.get("/reports")
 def get_reports(db: Session = Depends(get_db)):
     reports = db.query(Report).all()
@@ -197,6 +200,7 @@ def get_reports(db: Session = Depends(get_db)):
         for r in reports
     ]
 
+#health check endpoint to see if models are loaded and is working right
 # @app.get("/health")
 # def health():
 #     return {

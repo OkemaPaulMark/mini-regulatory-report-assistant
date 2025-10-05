@@ -7,8 +7,10 @@ DATABASE_URL = "sqlite:///./reports.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# Define the Report model
 Base = declarative_base()
 
+#pydantic model for the report
 class Report(Base):
     __tablename__ = "reports"
 

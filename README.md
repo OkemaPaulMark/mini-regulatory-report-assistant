@@ -92,7 +92,7 @@ Click French or Swahili to see translations in French or Swahili.
 
 View report history or charts by clicking the buttons on the navbar
 
-## 📸 Screenshots
+## Screenshots
 Below are a sample screenshots of the system.
 ### Main Page
 ![Main Page](screenshots/main_page.png)
@@ -115,10 +115,8 @@ Below are a sample screenshots of the system.
 
 ## Future Improvements
 
-Use domain-specific medical NER models from Hugging Face for higher accuracy.
-
-Add full multi-language support for all extracted fields.
-
-Integrate charts and analytics to visualize severity and outcomes.
-
-Deploy the project live on Heroku, Vercel, or similar platforms.
+- Integrate **LangChain** to extract structured, JSON-formatted medical data using LLMs.
+- Combine **Hugging Face medical NER models** with LLM reasoning for high accuracy.
+- Add **multi-language support** for all extracted and translated fields.
+- Build **visual analytics dashboards** (charts for diagnosis trends, severity rates).
+- Deploy the full system to **Heroku**, **Vercel**, or **Render** for public access.
