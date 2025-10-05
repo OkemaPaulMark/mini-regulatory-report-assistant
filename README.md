@@ -19,31 +19,6 @@ The project integrates **rule-based extraction** and **Hugging Face NLP models**
 
 ---
 
-## Project Structure
-regulatory-report-assistant/
-│
-├── backend/
-│ ├── main.py # FastAPI application
-│ ├── database.py # SQLAlchemy DB models and session
-│ └── requirements.txt # Python dependencies
-│
-├── frontend/
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── ReportForm.jsx
-│ │ │ ├── ReportResult.jsx
-│ │ │ ├── ReportHistory.jsx
-│ │ │ └── SeverityChart.jsx
-│ │ └── App.jsx
-│ ├── package.json
-│ └── vite.config.js
-│
-├── screenshots/ # Folder containing UI screenshots
-├── requirements.txt # Root Python dependencies (if any)
-├── .gitignore
-└── README.md
-
----
 
 ## Features
 
@@ -89,7 +64,7 @@ uvicorn main:app --reload
 
 ```
 
-## Frontend
+### Frontend
 ```bash
 # Navigate to frontend folder
 cd frontend
@@ -103,7 +78,7 @@ npm run dev
 Open your browser at http://localhost:5173 to use the app.
 
 
-Usage
+## Usage
 
 Paste a medical report into the text area.
 
@@ -113,21 +88,32 @@ View extracted data below the form.
 
 Optional:
 
-Click Translate Outcome to see translations in French or Swahili.
+Click French or Swahili to see translations in French or Swahili.
 
-View report history or charts.
+View report history or charts by clicking the buttons on the navbar
 
-Screenshots
+## 📸 Screenshots
+Below are a sample screenshots of the system.
+### Main Page
+![Main Page](screenshots/main_page.png)
 
-Form and Input
+### Processed Report English
+![Processed Report English](screenshots/processed_report_eng.png)
+
+### Processed Report French
+![Processed Report French](screenshots/processed_report_french.png)
+
+### Processed Report Swahili
+![Processed Report Swahili](screenshots/processed_report_swahili.png)
+
+### Report History
+![Report History](screenshots/report_history.png)
+
+### Severity Chart
+![Severity Chart](screenshots/analytics.png)
 
 
-Processed Report
-
-
-Ensure your screenshots are inside the screenshots/ folder.
-
-Future Improvements
+## Future Improvements
 
 Use domain-specific medical NER models from Hugging Face for higher accuracy.
 
