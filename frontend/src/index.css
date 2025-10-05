@@ -1,0 +1,5 @@
+/* Remove all Tailwind directives when using CDN */
+body {
+  margin: 0;
+  padding: 0;
+}
